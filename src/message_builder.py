@@ -119,18 +119,13 @@ class MessageBuilder(object):
 
         print("stageInfo: ", stageInfo, ", stage: ", stage, ", status: ", status)
         if len(stageInfo) > 0:
-            for part in stageInfo.split("\t"):
-                print("part = ", part)
-                try:
-                  (icon, stage) = part.strip().split(" ")
-                  stageMap[stage] = icon
-                except Exception as e:
-                  print("skipped part: [%s]", part, "error ", e)
+            for part in stageInfo.split("\n"):
+              (icon, sg) = part.strip().split(" ")
+              stageMap[sg] = icon
 
 
         icon = STATE_ICONS[status]
         stageMap[stage] = icon
-        print("stageMap: {%s}", stageMap)
 
         return "\n".join(['%s %s' % (v, k) for (k, v) in stageMap.items()])
 
