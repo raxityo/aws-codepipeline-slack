@@ -1,4 +1,4 @@
-AWS CodePipeline Slack Notifications 
+AWS CodePipeline Slack Notifications
 =======================
 
 This bot will notify you of CodePipeline progress (using [CloudWatch Events](https://docs.aws.amazon.com/AmazonCloudWatch/latest/events/WhatIsCloudWatchEvents.html)).
@@ -25,8 +25,7 @@ Required parameters:
 - `SlackOAuthAccessToken`
 - `SlackOAuthAccessToken`
 - `SlackChannel` (defaults to `builds`).
-- `SlackBotName` (defaults to `PipelineBuildBot`).
-- `SlackBotIcon` (defaults to `:robot_face:` 🤖 ).
+- `SlackAppId`.
 
 
 Your Slack App requires the following Bot Token Scopes:

@@ -11,14 +11,9 @@ Parameters:
     Type: String
     MinLength: 1
     Default: builds
-  SlackBotName:
+  SlackAppId:
     MinLength: 1
     Type: String
-    Default: PipelineBuildBot
-  SlackBotIcon:
-    MinLength: 1
-    Type: String
-    Default: ":robot_face:"
 
 Resources:
   Notifier:
@@ -33,8 +28,7 @@ Resources:
       Environment:
         Variables:
           SLACK_BOT_TOKEN: !Ref SlackBotUserOAuthAccessToken
-          SLACK_BOT_NAME: !Ref SlackBotName
-          SLACK_BOT_ICON: !Ref SlackBotIcon
+          SLACK_APP_ID: !Ref SlackAppId
           SLACK_CHANNEL: !Ref SlackChannel
 
       Policies:

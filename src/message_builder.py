@@ -24,7 +24,7 @@ class MessageBuilder(object):
         else:
             self.fields = [
                 {"title": buildInfo.pipeline,
-                 "value": "UNKNOWN",
+                 "value": "QUEUED",
                  "short": True
                  }
             ]
@@ -38,9 +38,10 @@ class MessageBuilder(object):
     def attachRevisionInfo(self, rev):
         if self.needsRevisionInfo() and rev:
             if 'revisionUrl' in rev:
+                revisionSummary = json.loads(rev['revisionSummary'])
                 self.fields.append({
                     "title": "Revision",
-                    "value": "<{}|{}: {}>".format(rev['revisionUrl'], rev['revisionId'][:7], rev['revisionSummary']),
+                    "value": "<{}|{}: {}>".format(rev['revisionUrl'], rev['revisionId'][:7], revisionSummary['CommitMessage']),
                     "short": True
                 })
             else:
@@ -110,7 +111,7 @@ class MessageBuilder(object):
                 'value'] = " ".join(context)
 
         pp = [fmt_p(p) for p in phases if show_p(p)]
-        si['value'] = " ".join(pp)
+        si['value'] = "\n".join(pp)
 
     def updateStatusInfo(self, stageInfo, stage, status):
         sm = OrderedDict()
@@ -123,7 +124,7 @@ class MessageBuilder(object):
         icon = STATE_ICONS[status]
         sm[stage] = icon
 
-        return "\t".join(['%s %s' % (v, k) for (k, v) in sm.items()])
+        return "\n".join(['%s %s' % (v, k) for (k, v) in sm.items()])
 
     def updatePipelineEvent(self, event):
         if event['detail-type'] == "CodePipeline Pipeline Execution State Change":
@@ -177,5 +178,5 @@ BUILD_PHASES = {
     'FAULT': "",
     'TIMED_OUT': ":stop_watch:",
     'IN_PROGRESS': ":building_construction:",
-    'STOPPED': ""
+    'STOPPED': ":octagonal_sign:"
 }
