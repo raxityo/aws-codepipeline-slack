@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from email.policy import default
 import json
 import logging
 from collections import OrderedDict
@@ -94,8 +95,8 @@ class MessageBuilder(object):
             return msg
 
         def show_p(p):
-            d = p.get('duration-in-seconds')
-            return p['phase-type'] != 'COMPLETED' and d is None or d > 0
+            d = p.get('duration-in-seconds', -1)
+            return p['phase-type'] != 'COMPLETED' and d == -1 or d > 0
 
         def pc(p):
             ctx = p.get('phase-context', [])
@@ -114,17 +115,24 @@ class MessageBuilder(object):
         si['value'] = "\n".join(pp)
 
     def updateStatusInfo(self, stageInfo, stage, status):
-        sm = OrderedDict()
+        stageMap = OrderedDict()
 
+        print("stageInfo: ", stageInfo, ", stage: ", stage, ", status: ", status)
         if len(stageInfo) > 0:
             for part in stageInfo.split("\t"):
-                (icon, sg) = part.split(" ")
-                sm[sg] = icon
+                print("part = ", part)
+                try:
+                  (icon, stage) = part.strip().split(" ")
+                  stageMap[stage] = icon
+                except Exception as e:
+                  print("skipped part: [%s]", part, "error ", e)
+
 
         icon = STATE_ICONS[status]
-        sm[stage] = icon
+        stageMap[stage] = icon
+        print("stageMap: {%s}", stageMap)
 
-        return "\n".join(['%s %s' % (v, k) for (k, v) in sm.items()])
+        return "\n".join(['%s %s' % (v, k) for (k, v) in stageMap.items()])
 
     def updatePipelineEvent(self, event):
         if event['detail-type'] == "CodePipeline Pipeline Execution State Change":
@@ -159,7 +167,9 @@ STATE_ICONS = {
     'RESUMED': "",
     'FAILED': ":x:",
     'CANCELED': ":no_entry:",
-    'SUPERSEDED': ""
+    'STOPPED': ":octagonal_sign:",
+    'STOPPING': ":octagonal_sign:",
+    'SUPERSEDED': ":arrow_double_up:"
 }
 
 STATE_COLORS = {
@@ -168,14 +178,17 @@ STATE_COLORS = {
     'RESUMED': "",
     'FAILED': "danger",
     'CANCELED': "",
+    'STOPPED': "",
+    'STOPPING': "",
     'SUPERSEDED': ""
 }
 
 # https://docs.aws.amazon.com/codebuild/latest/APIReference/API_BuildPhase.html
+
 BUILD_PHASES = {
     'SUCCEEDED': ":white_check_mark:",
     'FAILED': ":x:",
-    'FAULT': "",
+    'FAULT': ":boom:",
     'TIMED_OUT': ":stop_watch:",
     'IN_PROGRESS': ":building_construction:",
     'STOPPED': ":octagonal_sign:"
