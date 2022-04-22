@@ -97,15 +97,15 @@ def post_build_msg(msgBuilder):
 
 
 def send_msg(ch, attachments):
-    r = client.chat_postMessage(channel=ch, 
-                                icon_emoji=SLACK_BOT_ICON, 
-                                username=SLACK_BOT_NAME, 
+    r = client.chat_postMessage(channel=ch,
+                                icon_url=SLACK_BOT_ICON,
+                                username=SLACK_BOT_NAME,
                                 attachments=attachments)
     return r
 
 
 def update_msg(ch, ts, attachments):
-    r = client.chat_update(channel=ch, 
-                           ts=ts, 
-                           attachments=attachments)    
+    r = client.chat_update(channel=ch,
+                           ts=ts,
+                           attachments=attachments)
     return r
